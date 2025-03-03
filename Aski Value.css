@@ -1,0 +1,30 @@
+body{
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    flex-grow: 100%;
+    margin:57px;
+    max-width: 100%;
+    
+}
+.input-value{
+    padding: 6px;
+    border: 2px solid rgb(4, 8, 241);
+    border-radius:10px;
+    font-size: 25px;
+    width: 400px;
+}
+#askies{
+    color:green;
+}
+.aski-value{
+    color:blue;
+    font-size: 34px;
+}
+h2{
+    color:deeppink
+}
+.keyboard{
+    width:90%;
+    height:350px;
+}
