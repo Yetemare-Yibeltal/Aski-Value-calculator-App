@@ -5,9 +5,13 @@ import { HistoryManager } from "./modules/historyManager.js";
 import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // DOM Elements
   const inputElement = document.getElementById("text-input");
   const btnClearInput = document.getElementById("btn-clear-input");
   const btnResetHistory = document.getElementById("btn-reset-history");
+  const btnExportHistory = document.getElementById("btn-export-history");
+  const btnCopyMetrics = document.getElementById("btn-copy-metrics");
+  const btnRecalcMetrics = document.getElementById("btn-recalc-metrics");
 
   if (!inputElement) return;
 
@@ -22,7 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   );
 
-  // Clear Input Listener
+  // --- Input Controls ---
+
   if (btnClearInput) {
     btnClearInput.addEventListener("click", () => {
       inputElement.value = "";
@@ -31,7 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Reset History Listener
+  inputElement.addEventListener("input", (e) => {
+    triggerAnalysis(e.target.value);
+  });
+
+  // --- History Action Listeners ---
+
   if (btnResetHistory) {
     btnResetHistory.addEventListener("click", () => {
       if (
@@ -43,10 +53,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Input Event Listener
-  inputElement.addEventListener("input", (e) => {
-    triggerAnalysis(e.target.value);
+  btnExportHistory?.addEventListener("click", () => {
+    const data = JSON.stringify(historyMgr.get(), null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `history-export-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   });
+
+  // --- Metrics Action Listeners ---
+
+  btnCopyMetrics?.addEventListener("click", () => {
+    const charLen = document.getElementById("val-char-len")?.innerText || "0";
+    const entropy = document.getElementById("val-entropy")?.innerText || "0";
+    const stego = document.getElementById("val-stego")?.innerText || "Clean";
+
+    const summary = `--- Text Diagnostics Metrics ---\nLength: ${charLen}\nEntropy: ${entropy}\nSteganography: ${stego}`;
+    navigator.clipboard.writeText(summary);
+    alert("Metrics copied to clipboard!");
+  });
+
+  btnRecalcMetrics?.addEventListener("click", () => {
+    triggerAnalysis(inputElement.value);
+  });
+
+  // --- Worker & Analysis Loop ---
 
   function triggerAnalysis(text) {
     worker.postMessage({ text });
@@ -77,6 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
     matrixComp.render(textVal);
   };
 
+  // --- Rendering Functions ---
+
   function renderHistory() {
     const container = document.getElementById("history-container");
     if (!container) return;
@@ -102,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    // History Item Click (Load back into input)
+    // Load entry on text click
     container.querySelectorAll(".history-text").forEach((el) => {
       el.addEventListener("click", (e) => {
         const idx = e.target.getAttribute("data-index");
@@ -111,17 +147,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // Delete Single History Item Click
+    // Delete single item click
     container.querySelectorAll(".btn-delete-item").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         const idx = parseInt(e.target.getAttribute("data-index"), 10);
-        const currentItems = historyMgr.get();
-        currentItems.splice(idx, 1);
-        localStorage.setItem(
-          historyMgr.storageKey,
-          JSON.stringify(currentItems),
-        );
+        if (typeof historyMgr.delete === "function") {
+          historyMgr.delete(idx);
+        } else {
+          const currentItems = historyMgr.get();
+          currentItems.splice(idx, 1);
+          localStorage.setItem(
+            historyMgr.storageKey,
+            JSON.stringify(currentItems),
+          );
+        }
         renderHistory();
       });
     });
@@ -148,11 +188,11 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="metrics-grid">
         <div class="metric-card">
           <span>Character Length:</span>
-          <strong>${charCount}</strong>
+          <strong id="val-char-len">${charCount}</strong>
         </div>
         <div class="metric-card ${stego.hasHiddenChars ? "warning" : ""}">
           <span>Steganography Diagnostic:</span>
-          <strong>${stego.hasHiddenChars ? `${stego.hiddenList.length} Hidden Anomaly Found` : "Clean Stream"}</strong>
+          <strong id="val-stego">${stego.hasHiddenChars ? `${stego.hiddenList.length} Hidden Anomaly Found` : "Clean Stream"}</strong>
         </div>
       </div>
     `;
@@ -252,36 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // Initial render for history on page load
+  // Initial render on page load
   renderHistory();
-});
-// History JSON Export
-document.getElementById('btn-export-history')?.addEventListener('click', () => {
-  const data = localStorage.getItem('app_history') || '[]';
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `history-export-${Date.now()}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// Copy Metrics Summary to Clipboard
-document.getElementById('btn-copy-metrics')?.addEventListener('click', () => {
-  const charLen = document.getElementById('val-char-len')?.innerText || '0';
-  const entropy = document.getElementById('val-entropy')?.innerText || '0';
-  const stego = document.getElementById('val-stego')?.innerText || 'Clean';
-  
-  const summary = `--- Text Diagnostics Metrics ---\nLength: ${charLen}\nEntropy: ${entropy}\nSteganography: ${stego}`;
-  navigator.clipboard.writeText(summary);
-  alert('Metrics copied to clipboard!');
-});
-
-// Manual Recalculate Trigger
-document.getElementById('btn-recalc-metrics')?.addEventListener('click', () => {
-  const inputElement = document.getElementById('text-input');
-  if (inputElement) {
-    inputElement.dispatchEvent(new Event('input'));
-  }
 });
