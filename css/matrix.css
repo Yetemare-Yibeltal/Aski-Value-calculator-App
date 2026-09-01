@@ -368,3 +368,171 @@ code {
   font-size: 0.85rem;
   font-style: italic;
 }
+/* Card Container Constraints */
+.panel {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Alignment & Collision Fix */
+.panel-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+}
+
+.panel-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.panel-title-group h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Button Group Alignment */
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Button Styling */
+.btn {
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary {
+  background-color: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+.btn-secondary:hover {
+  background-color: #475569;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #38bdf8;
+  border: 1px solid #0284c7;
+}
+.btn-outline:hover {
+  background-color: rgba(56, 189, 248, 0.1);
+}
+
+.btn-danger-outline {
+  background-color: transparent;
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+.btn-danger-outline:hover {
+  background-color: #7f1d1d;
+  color: #ffffff;
+}
+
+/* Metrics Grid Layout */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.metric-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  color: #38bdf8;
+}
+
+.metric-card.status-warning {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+.metric-card.status-warning .metric-value {
+  color: #fca5a5;
+}
+
+/* History Section Styles */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.history-item {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-text {
+  color: #e2e8f0;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.history-text:hover {
+  color: #38bdf8;
+}
+
+.btn-delete-item {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.btn-delete-item:hover {
+  color: #ef4444;
+}
