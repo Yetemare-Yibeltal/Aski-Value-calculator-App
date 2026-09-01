@@ -122,3 +122,53 @@ code {
   position: sticky;
   top: 0;
 }
+.bit-matrix-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bit-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.bit-box {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 0.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bit-box.active {
+  border-color: #38bdf8;
+  background: #0284c7;
+  color: white;
+}
+
+.btn-flip {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.btn-flip:hover {
+  background: #475569;
+}
+
+.metric-card.warning {
+  border-color: #ef4444;
+  color: #fca5a5;
+}
