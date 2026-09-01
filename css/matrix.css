@@ -172,61 +172,98 @@ code {
   border-color: #ef4444;
   color: #fca5a5;
 }
+/* Structural Footer Layout */
 .app-footer {
-  background-color: var(--bg-secondary, #0f172a);
-  border-top: 1px solid var(--border-color, #334155);
+  width: 100%;
+  background-color: #0b1120;
   color: #94a3b8;
-  padding: 2rem 1.5rem;
-  margin-top: 3rem;
-  font-size: 0.9rem;
+  margin-top: 4rem;
+  padding: 0 1.5rem 2.5rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #334155 20%,
+    #334155 80%,
+    transparent
+  );
+  margin-bottom: 2rem;
 }
 
 .footer-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  text-align: center;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
   .footer-container {
     flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .footer-left {
     text-align: left;
   }
 }
 
-.footer-brand p {
-  margin: 0.2rem 0;
+.footer-left .copyright {
+  color: #64748b;
+  font-size: 0.825rem;
 }
 
-.credits .heart {
+.footer-left .authorship {
+  color: #cbd5e1;
+}
+
+.heart-icon {
   color: #ef4444;
   display: inline-block;
-  margin: 0 2px;
+  margin: 0 3px;
+  font-size: 0.95rem;
 }
 
-.footer-links {
+.footer-right {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
-.footer-links a {
+.footer-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.footer-nav a {
   color: #38bdf8;
   text-decoration: none;
-  transition: color 0.2s ease;
+  font-weight: 500;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
-.footer-links a:hover {
+.footer-nav a:hover {
   color: #60a5fa;
   text-decoration: underline;
-}
-
-.footer-links .divider {
-  color: #475569;
 }
