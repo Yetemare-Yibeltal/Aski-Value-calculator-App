@@ -1,0 +1,11 @@
+.perf-banner {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.perf-banner strong {
+  color: var(--accent-color);
+}
