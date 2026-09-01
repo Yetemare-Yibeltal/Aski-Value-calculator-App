@@ -1,49 +1,54 @@
-.matrix-box {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+.encoding-card,
+.hash-grid,
+.freq-container {
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #f8fafc;
 }
 
-.matrix-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 0.75rem;
+code {
+  font-family: 'Fira Code', monospace;
+  color: #38bdf8;
+  word-break: break-all;
 }
 
-.matrix-card {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
+.chart-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bar-label {
+  width: 60px;
+  font-weight: bold;
+}
+
+.bar-fill-wrap {
+  flex: 1;
+  background: #0f172a;
+  height: 12px;
   border-radius: 6px;
-  padding: 0.75rem 0.5rem;
-  text-align: center;
+  overflow: hidden;
 }
 
-.matrix-char {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: var(--accent-color);
-  margin-bottom: 0.5rem;
+.bar-fill {
+  background: #3b82f6;
+  height: 100%;
+  transition: width 0.2s ease-in-out;
 }
 
-.matrix-bits {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 3px;
-}
-
-.bit-dot {
-  font-family: monospace;
-  font-size: 0.7rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 2px;
-  padding: 2px 0;
-  color: var(--text-muted);
-}
-
-.bit-dot.bit-active {
-  background-color: #10b981;
-  color: #000;
-  font-weight: bold;
+.bar-val {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  width: 90px;
 }
