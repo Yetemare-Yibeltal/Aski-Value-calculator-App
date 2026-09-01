@@ -16,6 +16,7 @@ import { BitwiseViewComponent } from "./components/bitwiseView.js";
 import { HashViewComponent } from "./components/hashView.js";
 import { PerformanceBannerComponent } from "./components/performanceBanner.js";
 import { SampleSelectorComponent } from "./components/sampleSelector.js";
+import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputElement = document.getElementById("text-input");
@@ -44,6 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   const perfComp = new PerformanceBannerComponent(
     document.getElementById("performance-container"),
+  );
+  const matrixComp = new BitMatrixVisualizerComponent(
+    document.getElementById("matrix-container"),
   );
   const historyMgr = new HistoryManager();
 
@@ -86,6 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     perfComp.render(perfResult.executionTimeMs);
     metricsComp.render(perfResult.result.metricsData);
+    matrixComp.render(text);
     freqComp.render(perfResult.result.freqData);
     tableComp.render(perfResult.result.charData);
     binaryComp.render(text);
