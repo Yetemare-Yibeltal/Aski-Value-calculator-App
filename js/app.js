@@ -1,77 +1,64 @@
+import { ConversionEngine } from "./modules/conversionEngine.js";
 import { CryptoEngine } from "./modules/cryptoEngine.js";
+import { SteganographyDetector } from "./modules/steganographyDetector.js";
+import { TextTransformer } from "./modules/textTransformer.js";
+import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputElement = document.getElementById("text-input");
   if (!inputElement) return;
 
-  const worker = new Worker("js/workers/analyzerWorker.js");
+  const matrixComp = new BitMatrixVisualizerComponent(
+    document.getElementById("matrix-container"),
+    (updatedText) => {
+      inputElement.value = updatedText;
+      processAll(updatedText);
+    },
+  );
 
-  worker.onmessage = async (e) => {
-    const { charDetails, encodings, frequency, executionTimeMs } = e.data;
-    const hashes = await CryptoEngine.generateHashes(inputElement.value);
+  async function processAll(text) {
+    // 1. Core Conversion & Entropy
+    const { charData, entropy, nonPrintableCount } =
+      ConversionEngine.analyzeString(text);
 
-    renderPerformance(executionTimeMs);
-    renderEncodings(encodings);
-    renderHashes(hashes);
-    renderFrequencyChart(frequency);
-    renderTable(charDetails);
-  };
+    // 2. Steganography Scan
+    const stegoResult = SteganographyDetector.analyze(text);
 
-  inputElement.addEventListener("input", (e) => {
-    worker.postMessage({ text: e.target.value });
-  });
+    // 3. Cryptographic Hashes
+    const hashes = await CryptoEngine.generateHashes(text);
 
-  function renderPerformance(time) {
-    const container = document.getElementById("performance-container");
-    if (container)
-      container.innerHTML = `<small>Execution Thread Time: <strong>${time} ms</strong></small>`;
+    // 4. Transform Formats
+    const morse = TextTransformer.toMorseCode(text);
+    const rot13 = TextTransformer.toRot13(text);
+
+    // 5. Render UI Sections
+    renderMetrics(text.length, entropy, nonPrintableCount, stegoResult);
+    renderEncodings(hashes, morse, rot13);
+    matrixComp.render(text);
+    renderTable(charData);
   }
 
-  function renderEncodings(enc) {
+  function renderMetrics(len, entropy, nonPrintable, stego) {
+    const container = document.getElementById("metrics-container");
+    if (!container) return;
+    container.innerHTML = `
+      <div class="metric-card"><span>Length:</span> <strong>${len} chars</strong></div>
+      <div class="metric-card"><span>Shannon Entropy:</span> <strong>${entropy} bits/symbol</strong></div>
+      <div class="metric-card"><span>Control Codes:</span> <strong>${nonPrintable}</strong></div>
+      <div class="metric-card ${stego.hasHiddenChars ? "warning" : ""}">
+        <span>Steganography Warning:</span> 
+        <strong>${stego.hasHiddenChars ? "Hidden Characters Detected!" : "Clean Stream"}</strong>
+      </div>
+    `;
+  }
+
+  function renderEncodings(hashes, morse, rot13) {
     const container = document.getElementById("binary-container");
     if (!container) return;
     container.innerHTML = `
-      <div class="encoding-card">
-        <div><strong>Base64:</strong> <code>${enc.base64}</code></div>
-        <div><strong>URL Encoded:</strong> <code>${enc.urlEncoded}</code></div>
-      </div>
-    `;
-  }
-
-  function renderHashes(hashes) {
-    const container = document.getElementById("hash-container");
-    if (!container) return;
-    container.innerHTML = `
-      <div class="hash-grid">
-        <div><strong>SHA-256:</strong> <code>${hashes.sha256}</code></div>
-        <div><strong>SHA-512:</strong> <code>${hashes.sha512}</code></div>
-      </div>
-    `;
-  }
-
-  function renderFrequencyChart(freqArray) {
-    const container = document.getElementById("frequency-container");
-    if (!container) return;
-    const maxCount = Math.max(...freqArray.map((f) => f.count), 1);
-
-    container.innerHTML = `
-      <h3>Character Frequency Distribution</h3>
-      <div class="chart-bars">
-        ${freqArray
-          .slice(0, 10)
-          .map(
-            (f) => `
-          <div class="bar-row">
-            <span class="bar-label">${f.char}</span>
-            <div class="bar-fill-wrap">
-              <div class="bar-fill" style="width: ${(f.count / maxCount) * 100}%"></div>
-            </div>
-            <span class="bar-val">${f.count} (${f.percentage}%)</span>
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
+      <div class="encoding-field"><strong>SHA-256 Checksum:</strong> <code>${hashes.sha256}</code></div>
+      <div class="encoding-field"><strong>Morse Code Stream:</strong> <code>${morse}</code></div>
+      <div class="encoding-field"><strong>ROT13 Cipher:</strong> <code>${rot13}</code></div>
     `;
   }
 
@@ -82,13 +69,13 @@ document.addEventListener("DOMContentLoaded", () => {
       <table class="data-table">
         <thead>
           <tr>
-            <th>Index</th>
+            <th>#</th>
             <th>Char</th>
+            <th>Category</th>
             <th>Decimal</th>
             <th>Hex</th>
             <th>Binary</th>
             <th>Unicode</th>
-            <th>UTF-8 Bytes</th>
           </tr>
         </thead>
         <tbody>
@@ -98,11 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <tr>
               <td>${d.index}</td>
               <td><strong>${d.character}</strong></td>
+              <td>${d.category}</td>
               <td>${d.decimal}</td>
-              <td><code>${d.hex}</code></td>
+              <td><code>${d.hexadecimal}</code></td>
               <td><code>${d.binary}</code></td>
-              <td><code>${d.unicode}</code></td>
-              <td><code>${d.utf8Bytes}</code></td>
+              <td><code>${d.unicodePoint}</code></td>
             </tr>
           `,
             )
@@ -111,4 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </table>
     `;
   }
+
+  inputElement.addEventListener("input", (e) => processAll(e.target.value));
+  processAll(inputElement.value);
 });
