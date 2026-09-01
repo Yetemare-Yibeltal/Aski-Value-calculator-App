@@ -39,16 +39,52 @@
       </section>
 
       <!-- Section 2: Analysis History Tracker -->
-      <section class="panel history-panel">
-        <div class="panel-header">
-          <div>
-            <h2>Query History Tracker</h2>
-            <p class="section-desc">Inspect previous analysis sessions saved locally across your browser sessions.</p>
-          </div>
-          <button id="btn-reset-history" class="btn btn-danger-outline">Clear All History</button>
-        </div>
-        <div id="history-container"></div>
-      </section>
+      <!-- Section 2: Analysis History Tracker -->
+<section class="panel history-panel">
+  <div class="panel-header">
+    <div class="panel-title-group">
+      <h2>Query History Tracker</h2>
+      <p class="section-desc">Inspect and reload previous text analysis sessions saved in local storage.</p>
+    </div>
+    <div class="panel-actions">
+      <button id="btn-export-history" class="btn btn-outline">Export JSON</button>
+      <button id="btn-reset-history" class="btn btn-danger-outline">Clear All</button>
+    </div>
+  </div>
+  <div id="history-container" class="panel-content">
+    <p class="empty-msg">No history items recorded yet.</p>
+  </div>
+</section>
+
+<!-- Section 3: Information Entropy & Metrics -->
+<section class="panel metrics-panel">
+  <div class="panel-header">
+    <div class="panel-title-group">
+      <h2>Information Entropy & Diagnostic Metrics</h2>
+      <p class="section-desc">Real-time Shannon entropy values, total byte sizes, and steganography scan alerts.</p>
+    </div>
+    <div class="panel-actions">
+      <button id="btn-recalc-metrics" class="btn btn-outline">Recalculate</button>
+      <button id="btn-copy-metrics" class="btn btn-secondary">Copy Metrics</button>
+    </div>
+  </div>
+  <div id="metrics-container" class="panel-content">
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-label">Character Length</span>
+        <strong class="metric-value" id="val-char-len">0</strong>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Shannon Entropy</span>
+        <strong class="metric-value" id="val-entropy">0.000 bits/symbol</strong>
+      </div>
+      <div class="metric-card status-clean" id="card-stego-status">
+        <span class="metric-label">Steganography Scan</span>
+        <strong class="metric-value" id="val-stego">Clean Stream</strong>
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- Section 3: Information Entropy & Metrics -->
       <section class="panel metrics-panel">
