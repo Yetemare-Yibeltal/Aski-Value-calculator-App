@@ -255,3 +255,33 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initial render for history on page load
   renderHistory();
 });
+// History JSON Export
+document.getElementById('btn-export-history')?.addEventListener('click', () => {
+  const data = localStorage.getItem('app_history') || '[]';
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `history-export-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Copy Metrics Summary to Clipboard
+document.getElementById('btn-copy-metrics')?.addEventListener('click', () => {
+  const charLen = document.getElementById('val-char-len')?.innerText || '0';
+  const entropy = document.getElementById('val-entropy')?.innerText || '0';
+  const stego = document.getElementById('val-stego')?.innerText || 'Clean';
+  
+  const summary = `--- Text Diagnostics Metrics ---\nLength: ${charLen}\nEntropy: ${entropy}\nSteganography: ${stego}`;
+  navigator.clipboard.writeText(summary);
+  alert('Metrics copied to clipboard!');
+});
+
+// Manual Recalculate Trigger
+document.getElementById('btn-recalc-metrics')?.addEventListener('click', () => {
+  const inputElement = document.getElementById('text-input');
+  if (inputElement) {
+    inputElement.dispatchEvent(new Event('input'));
+  }
+});
