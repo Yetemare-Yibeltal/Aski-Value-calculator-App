@@ -52,3 +52,73 @@ code {
   color: #94a3b8;
   width: 90px;
 }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.input-panel {
+  grid-column: span 12;
+}
+.metrics-panel {
+  grid-column: span 4;
+}
+.matrix-panel {
+  grid-column: span 8;
+}
+.encodings-panel {
+  grid-column: span 6;
+}
+.frequency-panel {
+  grid-column: span 6;
+}
+.table-panel {
+  grid-column: span 12;
+}
+
+@media (max-width: 1024px) {
+  .metrics-panel,
+  .matrix-panel,
+  .encodings-panel,
+  .frequency-panel {
+    grid-column: span 12;
+  }
+}
+
+.table-scroll-wrap {
+  overflow-x: auto;
+  max-height: 450px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+.data-table th {
+  background: #0f172a;
+  color: #38bdf8;
+  position: sticky;
+  top: 0;
+}
