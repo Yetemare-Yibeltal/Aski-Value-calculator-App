@@ -33,70 +33,61 @@
             <div id="sample-container"></div>
           </div>
         </div>
-        <!-- Default text removed -->
         <textarea id="text-input" placeholder="Type or paste text here to initiate real-time text analysis (Ctrl + K to focus)..."></textarea>
         <div id="performance-container"></div>
       </section>
 
       <!-- Section 2: Analysis History Tracker -->
-      <!-- Section 2: Analysis History Tracker -->
-<section class="panel history-panel">
-  <div class="panel-header">
-    <div class="panel-title-group">
-      <h2>Query History Tracker</h2>
-      <p class="section-desc">Inspect and reload previous text analysis sessions saved in local storage.</p>
-    </div>
-    <div class="panel-actions">
-      <button id="btn-export-history" class="btn btn-outline">Export JSON</button>
-      <button id="btn-reset-history" class="btn btn-danger-outline">Clear All</button>
-    </div>
-  </div>
-  <div id="history-container" class="panel-content">
-    <p class="empty-msg">No history items recorded yet.</p>
-  </div>
-</section>
-
-<!-- Section 3: Information Entropy & Metrics -->
-<section class="panel metrics-panel">
-  <div class="panel-header">
-    <div class="panel-title-group">
-      <h2>Information Entropy & Diagnostic Metrics</h2>
-      <p class="section-desc">Real-time Shannon entropy values, total byte sizes, and steganography scan alerts.</p>
-    </div>
-    <div class="panel-actions">
-      <button id="btn-recalc-metrics" class="btn btn-outline">Recalculate</button>
-      <button id="btn-copy-metrics" class="btn btn-secondary">Copy Metrics</button>
-    </div>
-  </div>
-  <div id="metrics-container" class="panel-content">
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <span class="metric-label">Character Length</span>
-        <strong class="metric-value" id="val-char-len">0</strong>
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">Shannon Entropy</span>
-        <strong class="metric-value" id="val-entropy">0.000 bits/symbol</strong>
-      </div>
-      <div class="metric-card status-clean" id="card-stego-status">
-        <span class="metric-label">Steganography Scan</span>
-        <strong class="metric-value" id="val-stego">Clean Stream</strong>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="panel history-panel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2>Query History Tracker</h2>
+            <p class="section-desc">Inspect and reload previous text analysis sessions saved in local storage.</p>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-export-history" class="btn btn-outline">Export JSON</button>
+            <button id="btn-reset-history" class="btn btn-danger-outline">Clear All</button>
+          </div>
+        </div>
+        <div id="history-container" class="panel-content">
+          <p class="empty-msg">No history items recorded yet.</p>
+        </div>
+      </section>
 
       <!-- Section 3: Information Entropy & Metrics -->
       <section class="panel metrics-panel">
-        <h2>Information Entropy & Text Metrics</h2>
-        <p class="section-desc">Shannon entropy calculations ($H(X)$), character volume, and anomaly diagnostics.</p>
-        <div id="metrics-container" class="metrics-grid-layout"></div>
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2>Information Entropy & Diagnostic Metrics</h2>
+            <p class="section-desc">Real-time Shannon entropy values, total byte sizes, and steganography scan alerts.</p>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-recalc-metrics" class="btn btn-outline">Recalculate</button>
+            <button id="btn-copy-metrics" class="btn btn-secondary">Copy Metrics</button>
+          </div>
+        </div>
+        <div id="metrics-container" class="panel-content">
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-label">Character Length</span>
+              <strong class="metric-value" id="val-char-len">0</strong>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Shannon Entropy</span>
+              <strong class="metric-value" id="val-entropy">0.000 bits/symbol</strong>
+            </div>
+            <div class="metric-card status-clean" id="card-stego-status">
+              <span class="metric-label">Steganography Scan</span>
+              <strong class="metric-value" id="val-stego">Clean Stream</strong>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Section 4: Bit Matrix Manipulator -->
       <section class="panel matrix-panel">
         <h2>Interactive 8-Bit Signal & Bitwise Manipulator</h2>
-        <p class="section-desc">Directly toggle active bit states ($0 \leftrightarrow 1$) to preview rendered byte shifts live.</p>
+        <p class="section-desc">Directly toggle active bit states (0 &harr; 1) to preview rendered byte shifts live.</p>
         <div id="matrix-container"></div>
       </section>
 
@@ -133,10 +124,10 @@
     <footer class="app-footer">
       <div class="footer-divider"></div>
       <div class="footer-container">
-          <div class="footer-left">
-        <p class="copyright">&copy; 2024 ASCII & Text Value Analyzer. All rights reserved.</p>
-        <p class="authorship">Built By <strong>Metages Yibeltal   <span class="heart-icon">❤️</span></strong></p>
-      </div>
+        <div class="footer-left">
+          <p class="copyright">&copy; 2026 ASCII & Text Value Analyzer. All rights reserved.</p>
+          <p class="authorship">Built By <strong>Metages Yibeltal <span class="heart-icon">&#10084;&#65039;</span></strong></p>
+        </div>
         <div class="footer-right">
           <ul class="footer-nav">
             <li><a href="#privacy" onclick="alert('Privacy Policy: All operations execute strictly client-side.')">Privacy Policy</a></li>
