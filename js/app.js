@@ -20,6 +20,8 @@ import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.j
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputElement = document.getElementById("text-input");
+  if (!inputElement) return;
+
   let currentAnalysisData = [];
 
   const themeToggleComp = new ThemeToggleComponent(
@@ -106,6 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
   inputElement.addEventListener("input", (e) => {
     processInput(e.target.value);
   });
+
+  if (inputElement.value) {
+    processInput(inputElement.value);
+  }
 
   KeyboardShortcuts.init({
     onFocusInput: () => inputElement.focus(),
