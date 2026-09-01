@@ -1,16 +1,34 @@
-# Advanced ASCII & Unicode Value Calculator
+# Bit Matrix & Data Encoding Visualizer
 
-An architecture-focused, zero-dependency JavaScript application designed for character encoding analytics, metrics parsing, and binary bitwise operations.
+A responsive, dark-mode web dashboard for visual testing, bit matrix manipulation, text encoding diagnostics, and frequency distribution analysis.
+
+---
 
 ## Features
 
-- Real-time ASCII, Unicode, Binary, Octal, and Hexadecimal conversion
-- Frequency analysis with custom chart rendering
-- Bitwise operations, 32-bit hashing, and execution performance tracking
-- Local storage history tracking and preset evaluation tests
-- JSON and CSV export capabilities
-- Fully responsive dark/light mode execution interface
+- **Bit Matrix Diagnostics:** Dynamic 8-bit grid rendering with interactive bit-flipping controls.
+- **Encoding Metrics:** Real-time data transformation for text, hex, binary, and custom character encodings.
+- **Frequency Distribution:** Integrated visual chart bars displaying character distribution metrics.
+- **Execution History:** Input log management with inline quick-load and item deletion.
+- **Fluid & Responsive Layout:** 12-column CSS Grid system optimized across desktop, tablet, and mobile displays.
 
-## Setup
+---
 
-Simply open `index.html` in any web browser or serve via a static local web server.
+## Tech Stack
+
+- **Frontend:** HTML5, Modern CSS3 (CSS Variables, Flexbox, CSS Grid)
+- **Typography:** Fira Code, System Sans-Serif
+- **Layout Architecture:** Modular CSS Tokens & Fluid Breakpoints
+
+---
+
+## Project Structure
+
+```text
+├── index.html          # Main dashboard structural scaffold
+├── css/
+│   └── matrix.css      # Standardized design system & responsive layout styles
+├── js/
+│   └── main.js        # Matrix manipulation logic & state handlers
+└── README.md           # Project documentation
+```
