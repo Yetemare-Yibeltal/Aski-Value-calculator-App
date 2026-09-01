@@ -1,120 +1,114 @@
-import { ConversionEngine } from "./modules/conversionEngine.js";
-import { SummaryMetrics } from "./modules/summaryMetrics.js";
-import { FrequencyAnalyzer } from "./modules/frequencyAnalyzer.js";
-import { HistoryManager } from "./modules/historyManager.js";
-import { PerformanceTracker } from "./modules/performanceTracker.js";
-import { KeyboardShortcuts } from "./modules/keyboardShortcuts.js";
-
-import { MetricsCardComponent } from "./components/metricsCard.js";
-import { CharacterTableComponent } from "./components/characterTable.js";
-import { FrequencyChartComponent } from "./components/frequencyChart.js";
-import { ExportToolbarComponent } from "./components/exportToolbar.js";
-import { HistoryViewComponent } from "./components/historyView.js";
-import { ThemeToggleComponent } from "./components/themeToggle.js";
-import { BinaryConverterViewComponent } from "./components/binaryConverterView.js";
-import { BitwiseViewComponent } from "./components/bitwiseView.js";
-import { HashViewComponent } from "./components/hashView.js";
-import { PerformanceBannerComponent } from "./components/performanceBanner.js";
-import { SampleSelectorComponent } from "./components/sampleSelector.js";
-import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.js";
+import { CryptoEngine } from "./modules/cryptoEngine.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputElement = document.getElementById("text-input");
   if (!inputElement) return;
 
-  let currentAnalysisData = [];
+  const worker = new Worker("js/workers/analyzerWorker.js");
 
-  const themeToggleComp = new ThemeToggleComponent(
-    document.getElementById("theme-container"),
-  );
-  const metricsComp = new MetricsCardComponent(
-    document.getElementById("metrics-container"),
-  );
-  const tableComp = new CharacterTableComponent(
-    document.getElementById("table-container"),
-  );
-  const freqComp = new FrequencyChartComponent(
-    document.getElementById("frequency-container"),
-  );
-  const binaryComp = new BinaryConverterViewComponent(
-    document.getElementById("binary-container"),
-  );
-  const bitwiseComp = new BitwiseViewComponent(
-    document.getElementById("bitwise-container"),
-  );
-  const hashComp = new HashViewComponent(
-    document.getElementById("hash-container"),
-  );
-  const perfComp = new PerformanceBannerComponent(
-    document.getElementById("performance-container"),
-  );
-  const matrixComp = new BitMatrixVisualizerComponent(
-    document.getElementById("matrix-container"),
-  );
-  const historyMgr = new HistoryManager();
+  worker.onmessage = async (e) => {
+    const { charDetails, encodings, frequency, executionTimeMs } = e.data;
+    const hashes = await CryptoEngine.generateHashes(inputElement.value);
 
-  themeToggleComp.render();
-
-  const historyComp = new HistoryViewComponent(
-    document.getElementById("history-container"),
-    (selectedText) => {
-      inputElement.value = selectedText;
-      processInput(selectedText);
-    },
-  );
-
-  const sampleComp = new SampleSelectorComponent(
-    document.getElementById("sample-container"),
-    (sampleText) => {
-      inputElement.value = sampleText;
-      processInput(sampleText);
-    },
-  );
-
-  const exportComp = new ExportToolbarComponent(
-    document.getElementById("export-container"),
-    () => currentAnalysisData,
-  );
-
-  sampleComp.render();
-  exportComp.render();
-  historyComp.render(historyMgr.get());
-
-  function processInput(text) {
-    const perfResult = PerformanceTracker.measure(() => {
-      const charData = ConversionEngine.analyzeString(text);
-      const metricsData = SummaryMetrics.calculate(charData);
-      const freqData = FrequencyAnalyzer.analyze(text);
-      return { charData, metricsData, freqData };
-    });
-
-    currentAnalysisData = perfResult.result.charData;
-
-    perfComp.render(perfResult.executionTimeMs);
-    metricsComp.render(perfResult.result.metricsData);
-    matrixComp.render(text);
-    freqComp.render(perfResult.result.freqData);
-    tableComp.render(perfResult.result.charData);
-    binaryComp.render(text);
-    bitwiseComp.render(text);
-    hashComp.render(text);
-
-    if (text.trim()) {
-      historyMgr.save(text);
-      historyComp.render(historyMgr.get());
-    }
-  }
+    renderPerformance(executionTimeMs);
+    renderEncodings(encodings);
+    renderHashes(hashes);
+    renderFrequencyChart(frequency);
+    renderTable(charDetails);
+  };
 
   inputElement.addEventListener("input", (e) => {
-    processInput(e.target.value);
+    worker.postMessage({ text: e.target.value });
   });
 
-  if (inputElement.value) {
-    processInput(inputElement.value);
+  function renderPerformance(time) {
+    const container = document.getElementById("performance-container");
+    if (container)
+      container.innerHTML = `<small>Execution Thread Time: <strong>${time} ms</strong></small>`;
   }
 
-  KeyboardShortcuts.init({
-    onFocusInput: () => inputElement.focus(),
-    onExport: () => document.getElementById("btn-export-json")?.click(),
-  });
+  function renderEncodings(enc) {
+    const container = document.getElementById("binary-container");
+    if (!container) return;
+    container.innerHTML = `
+      <div class="encoding-card">
+        <div><strong>Base64:</strong> <code>${enc.base64}</code></div>
+        <div><strong>URL Encoded:</strong> <code>${enc.urlEncoded}</code></div>
+      </div>
+    `;
+  }
+
+  function renderHashes(hashes) {
+    const container = document.getElementById("hash-container");
+    if (!container) return;
+    container.innerHTML = `
+      <div class="hash-grid">
+        <div><strong>SHA-256:</strong> <code>${hashes.sha256}</code></div>
+        <div><strong>SHA-512:</strong> <code>${hashes.sha512}</code></div>
+      </div>
+    `;
+  }
+
+  function renderFrequencyChart(freqArray) {
+    const container = document.getElementById("frequency-container");
+    if (!container) return;
+    const maxCount = Math.max(...freqArray.map((f) => f.count), 1);
+
+    container.innerHTML = `
+      <h3>Character Frequency Distribution</h3>
+      <div class="chart-bars">
+        ${freqArray
+          .slice(0, 10)
+          .map(
+            (f) => `
+          <div class="bar-row">
+            <span class="bar-label">${f.char}</span>
+            <div class="bar-fill-wrap">
+              <div class="bar-fill" style="width: ${(f.count / maxCount) * 100}%"></div>
+            </div>
+            <span class="bar-val">${f.count} (${f.percentage}%)</span>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  function renderTable(data) {
+    const container = document.getElementById("table-container");
+    if (!container) return;
+    container.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Index</th>
+            <th>Char</th>
+            <th>Decimal</th>
+            <th>Hex</th>
+            <th>Binary</th>
+            <th>Unicode</th>
+            <th>UTF-8 Bytes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data
+            .map(
+              (d) => `
+            <tr>
+              <td>${d.index}</td>
+              <td><strong>${d.character}</strong></td>
+              <td>${d.decimal}</td>
+              <td><code>${d.hex}</code></td>
+              <td><code>${d.binary}</code></td>
+              <td><code>${d.unicode}</code></td>
+              <td><code>${d.utf8Bytes}</code></td>
+            </tr>
+          `,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+  }
 });
