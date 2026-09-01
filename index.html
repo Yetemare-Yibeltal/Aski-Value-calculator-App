@@ -25,22 +25,46 @@
       <h1>ASCII & Text Value Analyzer</h1>
       <p>Analyze character encodings, binary formats, and string metric analytics in real time.</p>
     </header>
+
     <main class="app-main">
-      <div id="sample-container"></div>
+      <!-- Preset Samples Section -->
+      <section id="sample-container" class="sample-selector-box"></section>
+
+      <!-- Main User Input Area -->
       <section class="input-section">
         <label for="text-input">Input Text <small>(Ctrl + K to focus)</small></label>
         <textarea id="text-input" placeholder="Type or paste text here to calculate values..."></textarea>
       </section>
-      <div id="performance-container"></div>
-      <div id="history-container"></div>
-      <div id="metrics-container"></div>
-      <div id="export-container"></div>
-      <div id="matrix-container"></div>
-      <div id="frequency-container"></div>
-      <div id="hash-container"></div>
-      <div id="binary-container"></div>
-      <div id="bitwise-container"></div>
-      <div id="table-container"></div>
+
+      <!-- Execution Performance Tracker -->
+      <section id="performance-container" class="perf-banner"></section>
+
+      <!-- Query History Section -->
+      <section id="history-container" class="history-panel"></section>
+
+      <!-- Aggregate Metrics Grid Section -->
+      <section id="metrics-container" class="metrics-grid"></section>
+
+      <!-- Data Export Controls -->
+      <section id="export-container" class="export-toolbar"></section>
+
+      <!-- Bit Matrix Visualizer Section -->
+      <section id="matrix-container" class="matrix-box"></section>
+
+      <!-- Character Frequency Breakdown -->
+      <section id="frequency-container" class="freq-container"></section>
+
+      <!-- 32-Bit Hashing Output -->
+      <section id="hash-container" class="hash-box"></section>
+
+      <!-- Raw Binary Display Output -->
+      <section id="binary-container" class="binary-converter-box"></section>
+
+      <!-- Bitwise Operations Display -->
+      <section id="bitwise-container" class="bitwise-box"></section>
+
+      <!-- Detailed Encodings Data Table -->
+      <section id="table-container" class="table-wrapper"></section>
     </main>
   </div>
   <script type="module" src="js/app.js"></script>
