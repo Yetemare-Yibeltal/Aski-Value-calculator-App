@@ -1,16 +1,19 @@
 import { CryptoEngine } from "./modules/cryptoEngine.js";
 import { SteganographyDetector } from "./modules/steganographyDetector.js";
 import { TextTransformer } from "./modules/textTransformer.js";
+import { HistoryManager } from "./modules/historyManager.js";
 import { BitMatrixVisualizerComponent } from "./components/bitMatrixVisualizer.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const inputElement = document.getElementById("text-input");
+  const btnClearInput = document.getElementById("btn-clear-input");
+  const btnResetHistory = document.getElementById("btn-reset-history");
+
   if (!inputElement) return;
 
-  // Initialize Web Worker thread for heavy calculations
+  const historyMgr = new HistoryManager();
   const worker = new Worker("js/workers/analyzerWorker.js");
 
-  // Initialize interactive 8-bit visualizer with live input sync
   const matrixComp = new BitMatrixVisualizerComponent(
     document.getElementById("matrix-container"),
     (updatedText) => {
@@ -19,21 +22,44 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   );
 
-  // Send input to worker on change
+  // Clear Input Listener
+  if (btnClearInput) {
+    btnClearInput.addEventListener("click", () => {
+      inputElement.value = "";
+      triggerAnalysis("");
+      inputElement.focus();
+    });
+  }
+
+  // Reset History Listener
+  if (btnResetHistory) {
+    btnResetHistory.addEventListener("click", () => {
+      if (
+        confirm("Are you sure you want to clear your entire analysis history?")
+      ) {
+        historyMgr.clear();
+        renderHistory();
+      }
+    });
+  }
+
+  // Input Event Listener
   inputElement.addEventListener("input", (e) => {
     triggerAnalysis(e.target.value);
   });
 
   function triggerAnalysis(text) {
     worker.postMessage({ text });
+    if (text.trim()) {
+      historyMgr.save(text);
+      renderHistory();
+    }
   }
 
-  // Handle messages returned from the Web Worker thread
   worker.onmessage = async (e) => {
     const { charDetails, encodings, frequency, executionTimeMs } = e.data;
     const textVal = inputElement.value;
 
-    // Execute concurrent asynchronous tasks
     const [hashes, stegoResult] = await Promise.all([
       CryptoEngine.generateHashes(textVal),
       Promise.resolve(SteganographyDetector.analyze(textVal)),
@@ -42,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const morseCode = TextTransformer.toMorseCode(textVal);
     const rot13Cipher = TextTransformer.toRot13(textVal);
 
-    // Render all layout components
     renderPerformance(executionTimeMs);
     renderMetrics(textVal.length, stegoResult);
     renderEncodings(encodings, hashes, morseCode, rot13Cipher);
@@ -52,10 +77,67 @@ document.addEventListener("DOMContentLoaded", () => {
     matrixComp.render(textVal);
   };
 
+  function renderHistory() {
+    const container = document.getElementById("history-container");
+    if (!container) return;
+
+    const items = historyMgr.get();
+    if (items.length === 0) {
+      container.innerHTML = `<p class="empty-msg">No history items recorded yet.</p>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="history-list">
+        ${items
+          .map(
+            (text, idx) => `
+          <div class="history-item">
+            <span class="history-text" data-index="${idx}">${escapeHtml(text)}</span>
+            <button class="btn-delete-item" data-index="${idx}" title="Delete entry">&times;</button>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+
+    // History Item Click (Load back into input)
+    container.querySelectorAll(".history-text").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        const idx = e.target.getAttribute("data-index");
+        inputElement.value = items[idx];
+        triggerAnalysis(items[idx]);
+      });
+    });
+
+    // Delete Single History Item Click
+    container.querySelectorAll(".btn-delete-item").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const idx = parseInt(e.target.getAttribute("data-index"), 10);
+        const currentItems = historyMgr.get();
+        currentItems.splice(idx, 1);
+        localStorage.setItem(
+          historyMgr.storageKey,
+          JSON.stringify(currentItems),
+        );
+        renderHistory();
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
   function renderPerformance(time) {
     const container = document.getElementById("performance-container");
     if (container) {
-      container.innerHTML = `<small>Worker Thread Execution: <strong>${time} ms</strong></small>`;
+      container.innerHTML = `<small>Worker Processing Speed: <strong>${time} ms</strong></small>`;
     }
   }
 
@@ -65,12 +147,12 @@ document.addEventListener("DOMContentLoaded", () => {
     container.innerHTML = `
       <div class="metrics-grid">
         <div class="metric-card">
-          <span>Character Count:</span>
+          <span>Character Length:</span>
           <strong>${charCount}</strong>
         </div>
         <div class="metric-card ${stego.hasHiddenChars ? "warning" : ""}">
-          <span>Steganography Scan:</span>
-          <strong>${stego.hasHiddenChars ? `${stego.hiddenList.length} Hidden Payload(s) Found` : "Clean Stream"}</strong>
+          <span>Steganography Diagnostic:</span>
+          <strong>${stego.hasHiddenChars ? `${stego.hiddenList.length} Hidden Anomaly Found` : "Clean Stream"}</strong>
         </div>
       </div>
     `;
@@ -94,9 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!container) return;
     container.innerHTML = `
       <div class="hash-grid">
-        <div><strong>SHA-1:</strong> <code>${hashes.sha1}</code></div>
-        <div><strong>SHA-256:</strong> <code>${hashes.sha256}</code></div>
-        <div><strong>SHA-512:</strong> <code>${hashes.sha512}</code></div>
+        <div><strong>SHA-1 Digest:</strong> <code>${hashes.sha1}</code></div>
+        <div><strong>SHA-256 Digest:</strong> <code>${hashes.sha256}</code></div>
+        <div><strong>SHA-512 Digest:</strong> <code>${hashes.sha512}</code></div>
       </div>
     `;
   }
@@ -108,14 +190,11 @@ document.addEventListener("DOMContentLoaded", () => {
       container.innerHTML = `<p class="empty-msg">No frequency data available.</p>`;
       return;
     }
-
     const maxCount = Math.max(...freqArray.map((f) => f.count), 1);
-
     container.innerHTML = `
-      <h3>Character Frequency Breakdown</h3>
       <div class="chart-bars">
         ${freqArray
-          .slice(0, 10)
+          .slice(0, 8)
           .map(
             (f) => `
           <div class="bar-row">
@@ -139,7 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
       container.innerHTML = `<p class="empty-msg">No characters to inspect.</p>`;
       return;
     }
-
     container.innerHTML = `
       <table class="data-table">
         <thead>
@@ -174,8 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  // Trigger initial execution if textarea has preset text
-  if (inputElement.value) {
-    triggerAnalysis(inputElement.value);
-  }
+  // Initial render for history on page load
+  renderHistory();
 });
